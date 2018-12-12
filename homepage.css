@@ -1,0 +1,23 @@
+article {
+    float:left;
+    padding:100px;
+    width:80%;
+    background-color: #fff;
+    box-shadow: 0 0 9px 5px hsla(321, 20%, 70%, 0.1);
+    margin-bottom: 25px;
+    border-radius: 4px; /* Rounded corners */
+}
+nav div {
+    list-style-type: none;
+    padding: 0;
+}
+nav {
+    float: left;
+    width: 20%;
+    padding: 100px;
+  }
+section:after{
+    content: "";
+    display: table;
+    clear: both;
+}
