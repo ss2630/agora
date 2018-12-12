@@ -1,6 +1,6 @@
 // us-cdbr-iron-east-01.cleardb.net
 // b171e685a3fc5f
-require('dotenv').config()
+require('dotenv').config();
 const express = require('express'); // Import Express
 const app = express(); // Instantiate Express
 
