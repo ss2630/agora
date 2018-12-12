@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>AGORA</title>
+        <link rel="stylesheet" href="/styles/styles-advanced.css" />
+        <link rel="stylesheet" href="/styles/login.css" />
+        <link rel="stylesheet" href="/styles/forms.css" />
+        <link href="https://fonts.googleapis.com/css?family=Amatic+SC|Lato" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    </head>
+    <body>
+        {{>header}}
+            <main>
+                <!-- Loop through the 'articles' in the object passed to the templating engine -->
+                <!-- Properties of each article are accessible within this #each block simply
+                by referencing their name in curly braces -->
+                <article>
+                    <div class="post-image-wrapper">
+                        <img src="{{article.image}}" class="post-image" />
+                    </div>
+                    <div class="post-content">
+                        <time>{{article.time}}</time>
+                        <h2>{{article.title}}</h2>
+                        <summary>{{article.summary}}</summary>
+                        
+                        <a href="/books/{{article.id}}" class="read-more">Read more ></a>
+                    </div>
+                </article>
+            </main>
+        {{>footer}}
+    </body>
+</html>
