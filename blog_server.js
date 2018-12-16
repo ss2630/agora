@@ -84,7 +84,7 @@ passport.use(new LocalStrategy({
 
     function (req, username, password, done) {
         // Find the user based off their username
-        const q = `SELECT * FROM heroku_b051a1693b23555.books.users WHERE username = ?;`
+        const q = `SELECT * FROM users WHERE username = ?;`
         db.query(q, [username], function (err, results, fields) {
             if (err) return done(err);
             // User, if it exists, will be the first row returned
@@ -131,7 +131,7 @@ passport.deserializeUser(function(id, done) {
 *************************/
 // Homepage
 app.get('/', function (req, res) {
-    const q = `SELECT * FROM books ORDER BY id desc limit 15`;
+    const q = `SELECT * FROM heroku_b051a1693b23555.books ORDER BY id desc limit 15`;
     db.query(q, function (err, results, fields) {
         if (err) {
             console.error(err);
@@ -147,7 +147,7 @@ app.get('/price', function (req, res) {
     upper=req.query.upper
     condition=req.query.conditions
 
-    const q = `SELECT price FROM books ORDER BY price between {lower} and upper and conditions={}`;
+    const q = `SELECT price FROM heroku_b051a1693b23555.books ORDER BY price between {lower} and upper and conditions={}`;
     db.query(q, function (err, results, fields) {
         if (err) {
             console.error(err);
