@@ -69,7 +69,6 @@ app.use(bodyParser.json()); // parse application/json
 app.use(express.static('public')); // Static files will use the 'public' folder as their root
 app.engine('handlebars', hbs.engine); // Register the handlebars templating engine
 app.set('view engine', 'handlebars'); // Set handlebars as our default template engine
-
 /************************
 *    PASSPORT CONFIG    *
 *************************/
@@ -82,9 +81,10 @@ app.use(passport.session()); // Needed to allow for persistent sessions with pas
 passport.use(new LocalStrategy({
         passReqToCallback: true // Passes req to the callback function, so we can put messages there if needed
     },
+
     function (req, username, password, done) {
         // Find the user based off their username
-        const q = `SELECT * FROM users WHERE username = ?;`
+        const q = `SELECT * FROM heroku_b051a1693b23555.books.users WHERE username = ?;`
         db.query(q, [username], function (err, results, fields) {
             if (err) return done(err);
             // User, if it exists, will be the first row returned
