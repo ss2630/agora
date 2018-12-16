@@ -168,6 +168,11 @@ app.get('/greet', function (request,response) {
 // app.get('/blog/post/:postid', function (req, res) {
 app.get('/books/:bookid', function (req, res) {
     const book_id = req.params.bookid;
+    const book_name = req.body.title;
+    const conditions = req.body.summary;
+    const price = req.body.full_text;
+    const image = req.body.image;
+    // const title=req.params.
     const q = `SELECT * FROM books WHERE id = ? `; 
     db.query(q, [book_id], function (err, results, fields) {
         if (err) {
@@ -175,7 +180,7 @@ app.get('/books/:bookid', function (req, res) {
         }
         // error_      
         const templateData = {
-            article: results[0]
+            article: results
         }
         res.render('singlePost', templateData);
     });
