@@ -81,10 +81,9 @@
                     </div>
                 </div>  
             </nav> 
-             
+             <main>
             {{#each articles}}
-            <main>
-                {{!-- <article> --}}
+                <article>
                     <div class="post-image-wrapper">
                         <img src="{{image}}" class="post-image" />
                     </div>
@@ -94,7 +93,7 @@
                         <summary>{{{summary}}}</summary>
                         <a href="/blog/post/{{id}}" class="read-more">Read more ></a>
                     </div>
-                {{!-- </article> --}}
+                </article>
                 {{/each}}
             </main>    
         </section>    
