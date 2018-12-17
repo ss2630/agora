@@ -136,11 +136,12 @@ article .post-image-wrapper {
 
 article:first-child .post-image-wrapper {
     flex-basis: 28%; /* This one is a larger article, so give the image a little less width */
+    align-content: center;
 }
 
 article .post-image {
-    width: 50px;
-    height: 100px;
+    width: 250px;
+    height: 500px;
     object-fit: cover;
 }
 
