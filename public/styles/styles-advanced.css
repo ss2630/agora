@@ -143,6 +143,8 @@ article .post-image {
     width: 250px;
     height: 500px;
     object-fit: cover;
+    align-content: center;
+    
 }
 
 article .post-content {
