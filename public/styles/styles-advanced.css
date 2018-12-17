@@ -140,11 +140,11 @@ article:first-child .post-image-wrapper {
 }
 
 article .post-image {
-    width: 250px;
-    height: 500px;
+    width: 80%;
+    height: 40%;
     object-fit: cover;
-    align-content: center;
-
+    padding-left: 125px; 
+    padding-top: 20px;
 }
 
 article .post-content {
