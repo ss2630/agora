@@ -222,11 +222,11 @@ Use these to change styles, for example, when viewing on mobile phones or small 
     margin: 0px 200px;
     padding-bottom: 20px;
 }
-#logoagora {
+#LOGOAGORA {
     height: 60px;
     width: 200px;
-    padding-top:10px;   
 }
+
 #bodybox{
     margin-top: 150px;
     float: left;
@@ -247,7 +247,3 @@ section:after{
     width:80%;
 }
 
-#logoagora {
-    width: 300px;
-    height: 100px;
-}
