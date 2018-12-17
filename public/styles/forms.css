@@ -5,12 +5,10 @@
     border: 1px solid rgba(240, 100, 100, 0.8);
     border-radius: 4px;
 }
-.form{
-    margin-top: 30px;
-}
+
 .form .input-wrap {
     display: block;
-    width: 100%;
+    /* width: 100%; */
     margin-bottom: 10px;
 }
 
