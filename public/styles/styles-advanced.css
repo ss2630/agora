@@ -140,8 +140,8 @@ article:first-child .post-image-wrapper {
 }
 
 article .post-image {
-    width: 80%;
-    height: 40%;
+    width: 500px;
+    height: 400px;
     object-fit: cover;
     padding-left: 125px; 
     padding-top: 20px;
