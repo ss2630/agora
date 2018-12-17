@@ -37,9 +37,9 @@ b{
 .login-form {
     display: flex;
     margin:200px;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+    /* flex-direction: column; */
+    justify-content: space-between;
+    align-items: center;
     width: 450px;
     height: 450px;
     background-color: white;
