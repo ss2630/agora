@@ -88,7 +88,7 @@ passport.use(new LocalStrategy({
     },
     function (req, username, password,  done) {
         // Find the user based off their username
-        const q = `SELECT * FROM users WHERE username = ?;`
+        const q = `SELECT * FROM heroku_b051a1693b23555.users WHERE username = ?;`
         db.query(q, [username], function (err, results, fields) {
             if (err) return done(err);
             // User, if it exists, will be the first row returned
@@ -136,7 +136,7 @@ passport.deserializeUser(function(id, done) {
 *************************/
 // Homepage
 app.get('/', function (req, res) {
-    const q = `SELECT * FROM books ORDER BY id desc limit 15`;
+    const q = `SELECT * FROM heroku_b051a1693b23555.books ORDER BY id desc limit 15`;
     db.query(q, function (err, results, fields) {
         if (err) {
             console.error(err);
@@ -149,7 +149,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/manage/',requireLoggedIn, function (req, res) {
-    const q = `SELECT * FROM books ORDER BY id  limit 15`;
+    const q = `SELECT * FROM heroku_b051a1693b23555.books ORDER BY id  limit 15`;
     db.query(q, function (err, results, fields) {
         if (err) {
             console.error(err);
@@ -163,7 +163,7 @@ app.get('/manage/',requireLoggedIn, function (req, res) {
 
 app.get('/managebook/:bookid',requireLoggedIn,function (req, res) {
     const book_id = req.params.bookid;
-    const q = `SELECT * FROM books WHERE id = ? `;
+    const q = `SELECT * FROM heroku_b051a1693b23555.books WHERE id = ? `;
     db.query(q, [book_id], function (err, results, fields) {
         if (err) {
             console.error(err);
@@ -181,7 +181,7 @@ app.get('/price', function (req, res) {
     upper=req.query.upper
     condition=req.query.conditions
 
-    const q = `SELECT price FROM books ORDER BY price between {lower} and upper and conditions={}`;
+    const q = `SELECT price FROM heroku_b051a1693b23555.books ORDER BY price between {lower} and upper and conditions={}`;
     db.query(q, function (err, results, fields) {
         if (err) {
             console.error(err);
@@ -202,7 +202,7 @@ app.get('/greet', function (request,response) {
 // app.get('/blog/post/:postid', function (req, res) {
 app.get('/delete/:bookid', requireLoggedIn,function (req, res) {
     const book_id = req.params.bookid;
-    const q = `DELETE FROM books WHERE id = ? `;
+    const q = `DELETE FROM heroku_b051a1693b23555.books WHERE id = ? `;
     db.query(q,[book_id],function (err, result) {
         if (err) throw err;
         console.log("remove: " + book_id);
@@ -234,7 +234,7 @@ app.get('/books/search', function (request,response) {
 
 app.get('/books/:bookid', function (req, res) {
     const book_id = req.params.bookid;
-    const q = `SELECT * FROM books WHERE id = ? `;
+    const q = `SELECT * FROM heroku_b051a1693b23555.books WHERE id = ? `;
     db.query(q, [book_id], function (err, results, fields) {
         if (err) {
             console.error(err);
@@ -287,7 +287,7 @@ app.post('/register', function (req, res) {
         return res.redirect('/register');
     }
     // Check if user exists, first
-    const checkExists = `SELECT * FROM users WHERE username = ?`
+    const checkExists = `SELECT * FROM heroku_b051a1693b23555.users WHERE username = ?`
     db.query(checkExists, [username], function (err, results, fields) {
         if (err) {
             console.error(err);
