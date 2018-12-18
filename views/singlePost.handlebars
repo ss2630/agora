@@ -21,9 +21,11 @@
                     </div>
                     <div class="post-content">
                         <time>{{article.time}}</time>
-                        <h2>{{article.title}}</h2>
-                        <summary>{{article.summary}}</summary>
-                        <a href="/blog/{{article.id}}" class="read-more">Read more ></a>
+                        <h3>Book name: {{article.book_name}}</h3>
+                        <condition>Condition: {{article.conditions}}</condition>
+                        <p>Price:{{article.price}}</p>
+                        
+                        <a href="/books/{{article.id}}" class="read-more">Read more ></a>
                     </div>
                 </article>
             </main>

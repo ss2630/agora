@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Admin</title>    
-        <link rel="stylesheet" href="../public/styles/admin.css" />
+        <title>Admin</title>
+        <link rel="stylesheet" href="/styles/admin.css" />
         <link rel="stylesheet" href="/styles/forms.css" />
         <link href="https://fonts.googleapis.com/css?family=Amatic+SC|Lato" rel="stylesheet">
         <link rel="stylesheet" href="/styles/styles-advanced.css" />
@@ -18,26 +18,38 @@
                     {{adminMessage}}
                 </div>
             {{/if}}
-            <form method="POST" class="post-form form" action="/article">
+            <form method="POST" class="post-form form" action="/books">
                 <h2>Add New Post</h2>
                 <div class="input-wrap">
-                    <label for="title">Post Title</label>
+                    <label for="title">Book Title</label>
                     <input type="text" name="title" />
                 </div>
                 <div class="input-wrap">
-                    <label for="summary">Summary</label>
-                    <textarea name="summary"></textarea>
+                    <label for="summary">Price</label>
+                    <input type='text' name="summary">
+                </div>
+                {{!-- change --}}
+                <div class="input-wrap">
+                    <label for="full_text">Condition</label>
+                    <select name="form" id="bookcondition">
+                        <option value="New condition" data-filtername="New">New</option>
+                        <option value="Very Good condition" data-filtername="Very Good">Very Good</option>
+                        <option value="Good condition" data-filtername="Good">Good</option>
+                        <option value="Acceptable condition" data-filtername="Acceptable">Acceptable</option>
+                        <option value="Poor condition" data-filtername="Poor">Poor</option>
+                    </select>
+
+                    {{!-- <textarea name="full_text"></textarea> --}}
                 </div>
                 <div class="input-wrap">
-                    <label for="full_text">Full Text</label>
-                    <textarea name="full_text" rows="10"></textarea>
-                </div>
-                <div class="input-wrap">
-                    <label for="image">Post Image</label>
+                    <label for="image"> Image</label>
+                    {{!-- <input type="file" class="imgur" accept="image/*" data-max-size="5000"/> --}}
                     <input type="text" name="image" />
                 </div>
-                <button type="submit">Add Post</button>
+                <button type="submit">Add Book</button>
+
             </form>
+            <button type="submit" action="/logout">log out</button>
         </div>
         {{>footer}}
     </body>

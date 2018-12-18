@@ -10,7 +10,7 @@ const app = express(); // Instantiate Express
 const moment = require('moment');
 const mysql = require('mysql');
 // const DB_USER='root'
-// const DB_NAME='AGORA'
+// const DB_NAME='agora'
 const bcrypt = require('bcryptjs');
 
 
@@ -21,7 +21,8 @@ const db = mysql.createConnection({
     // port: 3306,
     // user: DB_USER,  // Environment variable. Start app like: 'DB_USER=app DB_PASS=test nodemond index.js'
     // password: 'dream',
-    // database: DB_user
+    // database: 'agora',
+
     host: process.env.DB_HOST,
     port: 3306,
     user: process.env.DB_USER,
@@ -63,12 +64,16 @@ app.use(session({
     saveUninitialized: true,
     resave: true
 }))
+
 app.use(flash()); // Allow messages to be saved in req object for use in templates when rendering
 app.use(bodyParser.urlencoded({ extended: false })); // Parse form submissions
 app.use(bodyParser.json()); // parse application/json
 app.use(express.static('public')); // Static files will use the 'public' folder as their root
-app.engine('handlebars', hbs.engine); // Register the handlebars templating engine
+app.engine('handlebars', hbs.engine); // Register the handlebars `templating engine
 app.set('view engine', 'handlebars'); // Set handlebars as our default template engine
+
+
+
 /************************
 *    PASSPORT CONFIG    *
 *************************/
@@ -81,8 +86,7 @@ app.use(passport.session()); // Needed to allow for persistent sessions with pas
 passport.use(new LocalStrategy({
         passReqToCallback: true // Passes req to the callback function, so we can put messages there if needed
     },
-
-    function (req, username, password, done) {
+    function (req, username, password,  done) {
         // Find the user based off their username
         const q = `SELECT * FROM users WHERE username = ?;`
         db.query(q, [username], function (err, results, fields) {
@@ -113,6 +117,7 @@ passport.use(new LocalStrategy({
 // This will be run after authentication
 // Just need ID for lookup later
 passport.serializeUser(function(user, done) {
+    console.log(user.id)
     done(null, user.id);
 });
 
@@ -131,7 +136,7 @@ passport.deserializeUser(function(id, done) {
 *************************/
 // Homepage
 app.get('/', function (req, res) {
-    const q = `SELECT * FROM heroku_b051a1693b23555.books ORDER BY id desc limit 15`;
+    const q = `SELECT * FROM books ORDER BY id desc limit 15`;
     db.query(q, function (err, results, fields) {
         if (err) {
             console.error(err);
@@ -142,12 +147,41 @@ app.get('/', function (req, res) {
         res.render('homepage', templateData);
     });
 });
+
+app.get('/manage/',requireLoggedIn, function (req, res) {
+    const q = `SELECT * FROM books ORDER BY id  limit 15`;
+    db.query(q, function (err, results, fields) {
+        if (err) {
+            console.error(err);
+        }
+        const templateData = {
+            books: results
+        };
+        res.render('manage', templateData);
+    });
+});
+
+app.get('/managebook/:bookid',requireLoggedIn,function (req, res) {
+    const book_id = req.params.bookid;
+    const q = `SELECT * FROM books WHERE id = ? `;
+    db.query(q, [book_id], function (err, results, fields) {
+        if (err) {
+            console.error(err);
+        }
+        // error_
+        const templateData = {
+            article: results[0]
+        }
+        res.render('managebook', templateData);
+    });
+});
+
 app.get('/price', function (req, res) {
     lower=req.query.lower
     upper=req.query.upper
     condition=req.query.conditions
 
-    const q = `SELECT price FROM heroku_b051a1693b23555.books ORDER BY price between {lower} and upper and conditions={}`;
+    const q = `SELECT price FROM books ORDER BY price between {lower} and upper and conditions={}`;
     db.query(q, function (err, results, fields) {
         if (err) {
             console.error(err);
@@ -166,27 +200,52 @@ app.get('/greet', function (request,response) {
 })
 // Individual blog post
 // app.get('/blog/post/:postid', function (req, res) {
+app.get('/delete/:bookid', requireLoggedIn,function (req, res) {
+    const book_id = req.params.bookid;
+    const q = `DELETE FROM books WHERE id = ? `;
+    db.query(q,[book_id],function (err, result) {
+        if (err) throw err;
+        console.log("remove: " + book_id);
+    });
+        res.redirect('/manage/')
+        // res.render('manage', templateData);
+    });
+
+app.get('/books/search', function (request,response) {
+    const book_name = request.query.name
+    console.log(year)
+    const category = request.query.price
+    const firstname = request.query.firstname
+    const lastname = request.query.surname
+    const allprizes = require(`${__dirname}/prizes.json`)
+
+    categories = allprizes.prizes.filter(function (prize) {
+        if (category === undefined && year === undefined){
+            return(true)
+        }else if(category === undefined) {
+            return (prize.year == year)
+        }else{
+            return (prize.category == category)
+        }
+
+    })
+});
+
+
 app.get('/books/:bookid', function (req, res) {
     const book_id = req.params.bookid;
-    const book_name = req.body.title;
-    const conditions = req.body.summary;
-    const price = req.body.full_text;
-    const image = req.body.image;
-    // const title=req.params.
-    const q = `SELECT * FROM books WHERE id = ? `; 
+    const q = `SELECT * FROM books WHERE id = ? `;
     db.query(q, [book_id], function (err, results, fields) {
         if (err) {
             console.error(err);
         }
-        // error_      
+        // error_
         const templateData = {
-            article: results
+            article: results[0]
         }
         res.render('singlePost', templateData);
     });
 });
-
-
 
 //
 // ACCOUNT MANAGEMENT
@@ -195,7 +254,7 @@ app.get('/login', function (req, res) {
     const user = req.user;
     if (user) {
         // If we already have a user, don't let them see the login page, just send them to the admin!
-        res.redirect('/admin');
+        res.redirect('/manage');
     } else {
         res.render('login', { loginMessage: req.flash('loginMessage') })
     }
@@ -204,7 +263,7 @@ app.get('/login', function (req, res) {
 app.post('/login', 
     // In this case, invoke the local authentication strategy.
     passport.authenticate('local', {
-        successRedirect: '/admin',
+        successRedirect: '/manage',
         failureRedirect: '/login',
         failureFlash: true
     })
@@ -213,7 +272,7 @@ app.post('/login',
 app.get('/register', function (req, res) {
     const user = req.user;
     if (user) {
-        res.redirect('/admin');
+        res.redirect('/manage');
     } else {
         res.render('register', { registerMessage: req.flash('registerMessage') })
     }
@@ -271,12 +330,12 @@ app.get('/admin', requireLoggedIn, function (req, res) {
 app.post('/books', requireLoggedIn, function (req, res) {
     // One style of escaping
     const book_name = req.body.title;
-    const conditions = req.body.summary;
-    const price = req.body.full_text;
+    const conditions = req.body.form;
+    const price = req.body.summary;
     const image = req.body.image;
     // error_ null cannot insert
-    const q = `INSERT INTO books(id, book_name, price,conditions, image,post_time) VALUES (default, ?, ?, ?, ?,NOW())`
-    db.query(q, [book_name, conditions, price, image], function (err, results, fields) {
+    const q = `INSERT INTO books(book_name, price,conditions, image,post_time) VALUES (?, ?, ?, ?,NOW())`
+    db.query(q, [book_name, price,conditions, image], function (err, results, fields) {
     // db.query(q, [book_name, condition, price, image, req.user.id], function (err, results, fields) {
         if (err) {
             console.error(err);
@@ -287,6 +346,33 @@ app.post('/books', requireLoggedIn, function (req, res) {
         }
     })
 });
+
+
+// update books
+app.post('/update', requireLoggedIn, function (req, res) {
+    // One style of escaping
+    const book_id = req.body.id;
+    console.log(book_id)
+    const book_name = req.body.title;
+    const conditions = req.body.form;
+    const price = req.body.price;
+    // const image = req.body.image;
+    // error_ null cannot insert
+    const q = "UPDATE books SET book_name = ?, price = ?, `conditions`=? WHERE id=?"
+    // const q = `Update INTO books(id, book_name, price,conditions, image,post_time) VALUES (default, ?, ?, ?, ?,NOW())`
+    db.query(q, [book_name, price, conditions, book_id], function (err, results, fields) {
+        // db.query(q, [book_name, condition, price, image, req.user.id], function (err, results, fields) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Failed. Oops.');
+        } else {
+            req.flash('adminMessage', 'Post added successfully!');
+            return res.redirect('/manage');
+        }
+    })
+});
+
+
 
 app.get('/greet', function (request,response) {
     const name = request.query.name
