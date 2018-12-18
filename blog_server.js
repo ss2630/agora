@@ -9,13 +9,10 @@ const app = express(); // Instantiate Express
 *****************************************/
 const moment = require('moment');
 const mysql = require('mysql');
-// const DB_USER='root'
-// const DB_NAME='agora'
 const bcrypt = require('bcryptjs');
 
 
-// b171e685a3fc5f
-// Set up database connection
+
 const db = mysql.createConnection({
     // host: 'localhost',
     // port: 3306,
