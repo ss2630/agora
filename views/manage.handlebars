@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Admin</title>
+        <!--<link rel="stylesheet" href="/styles/admin.css" />-->
+        <!--<link rel="stylesheet" href="/styles/forms.css" />-->
+        <!--<link href="https://fonts.googleapis.com/css?family=Amatic+SC|Lato" rel="stylesheet">-->
+        <!--<link rel="stylesheet" href="/styles/styles-advanced.css" />-->
+        <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
+        <!--<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">-->
+        <link href="/styles/bootstrap.min.css" rel="stylesheet">
+        <link href="/styles/style.css" rel="stylesheet">
+
+    </head>
+    <body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8">
+                <div class="jumbotron">
+                    <nav class="navbar navbar-default navbar-fixed-top">
+                        <div class="container">
+                            <img id="logoagora" src="../img/Agora.jpg">
+                            <!-- Brand and toggle get grouped for better mobile display -->
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            <!-- Collect the nav links, forms, and other content for toggling -->
+                            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li><a href="/">Home</i></a></li>
+                                    <li><a href="/register">Register <i class="fas fa-user-plus"></i></a></li>
+                                    <li><a href="/login">Log In <i class="fas fa-user"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="nav-container">
+                            <link rel="stylesheet">
+                            <div id="searchbar" class="search-box">
+                                <div class="">
+                                    <div class="input-group">
+                                        <input type="hidden" name="search_param" value="-1" id="search_param">
+                                        <input id="query" type="text" class="search-text-input form-control" name="q" value="" placeholder="Search for books">
+                                        <span class="input-group-btn">
+                            <button id="searchgo" class="btn btn-primary search-button" type="button">Search</button>
+                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <script>
+                        function Search()
+                        {
+                            var category = -1;
+                            if ($("#search_param") && $("#search_param").val()) {
+                                category = $("#search_param").val();
+                            }
+                            var sort = 1;
+                            if ($('#sort_param') && $('#sort_param').val()) {
+                                sort = $('#sort-field').val();
+                            }
+                            var data = {
+                                "q": $('#query').val(),
+                                "category": category,
+                                "sort": sort
+                            };
+                            fbq('track', 'Search', {
+                                query: data["q"],
+                                category: data["category"],
+                                sort: data["sort"]
+                            });
+                            var params = $.param(data);
+                            window.location.href = "/Search?" + params;
+                        }
+
+
+
+                        function BindSearchDirect() {
+                            $("#query").keyup(function (event) {
+                                if (event.keyCode == 13) {
+                                    $("#searchgo").click();
+                                }
+                            });
+
+                            $('#searchgo').click(function () {
+                                Search();
+                            });
+
+
+                            $(document).ready(function (e) {
+                                $('.search-panel .dropdown-menu').find('a').click(function (e) {
+                                    e.preventDefault();
+                                    var param = $(this).attr("href").replace("#", "");
+                                    var concept = $(this).text();
+                                    $('.search-panel span#search_concept').text(concept);
+                                    $('.input-group #search_param').val(param);
+                                });
+                            });
+                        }
+                        $(document).ready(BindSearchDirect);
+                    </script>
+                    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+                    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>
+                                    #
+                                </th>
+                                <th>
+
+                                        Book Name
+
+
+                                </th>
+                                <th>
+                                    Book Price
+                                </th>
+                                <th>
+                                    Condition
+                                </th>
+                                <th>
+                                    <a class="btn btn-danger btn-large" href="/admin">New Book</a>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{# each books }}
+                            <tr>
+                                <td>
+                                    {{id}}
+                                </td>
+                                <td>
+                                    {{book_name}}
+                                </td>
+                                <td>
+                                    <time>{{price}}</time>
+                                </td>
+                                <td>
+                                    {{conditions}}
+                                </td>
+                                <td>
+                                    <a class="btn btn-primary btn-large" href="/managebook/{{id}}">Edit</a>
+                                </td>
+                            </tr>
+                            {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <a class="page-link" href="#">Previous</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">1</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">2</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">3</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">4</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">5</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-md-2">
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/scripts.js"></script>
+    </body>
+</html>
