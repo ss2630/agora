@@ -11,15 +11,12 @@ const moment = require('moment');
 const mysql = require('mysql');
 const bcrypt = require('bcryptjs');
 
-
-
 const db = mysql.createConnection({
     // host: 'localhost',
     // port: 3306,
     // user: DB_USER,  // Environment variable. Start app like: 'DB_USER=app DB_PASS=test nodemond index.js'
     // password: 'dream',
     // database: 'agora',
-
     host: process.env.DB_HOST,
     port: 3306,
     user: process.env.DB_USER,
@@ -76,28 +73,18 @@ app.set('view engine', 'handlebars'); // Set handlebars as our default template 
 app.use(passport.initialize()); // Needed to use Passport at all
 app.use(passport.session()); // Needed to allow for persistent sessions with passport
 
-// Configure authentication using username and password
-// In all callback functions that we use with passport we will expect a last argument, 'done'
-// 'done' is analagous to 'next' in middleware (and of course we could name it 'next')
 passport.use(new LocalStrategy({
         passReqToCallback: true // Passes req to the callback function, so we can put messages there if needed
     },
     function (req, username, password,  done) {
-        // Find the user based off their username
         const q = `SELECT * FROM heroku_b051a1693b23555.users WHERE username = ?;`
         db.query(q, [username], function (err, results, fields) {
             if (err) return done(err);
-            // User, if it exists, will be the first row returned
-            // There should also only _be_ one row, provided usernames are unique in the app (and they should be!)
             const user = results[0]
-            // 'done' here is looking for the following arguments: error, user, and a message or callback
             if (!user) {
                 return done(null, false, req.flash('loginMessage', 'User not found')); // req.flash stores a temporary key/value
             }
-            // User exists, check password against hash
             const userHash = user.hash; // Grab the hash of the user
-            // Hash and compare the provided password with the stored hash.
-            // This is an async function, so we have to use a callback to receive the results and continue
             bcrypt.compare(password, userHash, function(err, matches) {
                 if (!matches) {
                     return done(null, false, req.flash('loginMessage', 'Incorrect username and/or password'));
@@ -108,17 +95,11 @@ passport.use(new LocalStrategy({
         })
     }
 ))
-
-// Tells passport what information to include in the session
-// This will be run after authentication
-// Just need ID for lookup later
 passport.serializeUser(function(user, done) {
     console.log(user.id)
     done(null, user.id);
 });
 
-// Tells passport how to get user from information in session
-// This will run on every request for which session data exists in a cookie.
 passport.deserializeUser(function(id, done) {
     const q = `SELECT * FROM users WHERE id = ?;`
     db.query(q, [id], function (err, results, fields) {
@@ -144,6 +125,7 @@ app.get('/', function (req, res) {
     });
 });
 
+// Edit page  manage
 app.get('/manage/',requireLoggedIn, function (req, res) {
     const q = `SELECT * FROM heroku_b051a1693b23555.books ORDER BY id  limit 15`;
     db.query(q, function (err, results, fields) {
@@ -164,7 +146,6 @@ app.get('/managebook/:bookid',requireLoggedIn,function (req, res) {
         if (err) {
             console.error(err);
         }
-        // error_
         const templateData = {
             article: results[0]
         }
@@ -196,7 +177,7 @@ app.get('/greet', function (request,response) {
     response.send("Hello, "+name+"!")
 })
 
-// Upload books
+// Delete books
 app.get('/delete/:bookid', requireLoggedIn,function (req, res) {
     const book_id = req.params.bookid;
     const q = `DELETE FROM heroku_b051a1693b23555.books WHERE id = ? `;
@@ -211,8 +192,6 @@ app.get('/books/search', function (request,response) {
     const book_name = request.query.name
     console.log(year)
     const category = request.query.price
-    const firstname = request.query.firstname
-    const lastname = request.query.surname
     const allprizes = require(`${__dirname}/prizes.json`)
 
     categories = allprizes.prizes.filter(function (prize) {
@@ -247,7 +226,6 @@ app.get('/books/:bookid', function (req, res) {
 app.get('/login', function (req, res) {
     const user = req.user;
     if (user) {
-        // If we already have a user, don't let them see the login page, just send them to the admin!
         res.redirect('/manage');
     } else {
         res.render('login', { loginMessage: req.flash('loginMessage') })
@@ -255,7 +233,6 @@ app.get('/login', function (req, res) {
 });
 
 app.post('/login', 
-    // In this case, invoke the local authentication strategy.
     passport.authenticate('local', {
         successRedirect: '/manage',
         failureRedirect: '/login',
@@ -280,7 +257,6 @@ app.post('/register', function (req, res) {
         req.flash('registerMessage', 'Username and password are required.')
         return res.redirect('/register');
     }
-    // Check if user exists, first
     const checkExists = `SELECT * FROM heroku_b051a1693b23555.users WHERE username = ?`
     db.query(checkExists, [username], function (err, results, fields) {
         if (err) {
