@@ -34,7 +34,6 @@ const db = mysql.createConnection({
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars'); 
-// Set up handlebars with a simple date formatting helper
 const hbs = exphbs.create({
     helpers: {
         formatDate: function (date) {
@@ -191,12 +190,13 @@ app.get('/price', function (req, res) {
     
 });
 
+
 app.get('/greet', function (request,response) {
     const name = request.query.name
     response.send("Hello, "+name+"!")
 })
-// Individual blog post
-// app.get('/blog/post/:postid', function (req, res) {
+
+// Upload books
 app.get('/delete/:bookid', requireLoggedIn,function (req, res) {
     const book_id = req.params.bookid;
     const q = `DELETE FROM heroku_b051a1693b23555.books WHERE id = ? `;
@@ -205,7 +205,6 @@ app.get('/delete/:bookid', requireLoggedIn,function (req, res) {
         console.log("remove: " + book_id);
     });
         res.redirect('/manage/')
-        // res.render('manage', templateData);
     });
 
 app.get('/books/search', function (request,response) {
@@ -244,9 +243,7 @@ app.get('/books/:bookid', function (req, res) {
     });
 });
 
-//
 // ACCOUNT MANAGEMENT
-
 app.get('/login', function (req, res) {
     const user = req.user;
     if (user) {
